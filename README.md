@@ -4,21 +4,21 @@ L is a minimalist project-aware structured logger for Go.
 
 ## Why?
 
-There are indeed already too many logging libraries out there.  It makes a lot
-of sense to continue using them if they serve you well, and maybe even if they
-don't given the effort of changing something as low level as logging.
+As observed by [capnslog](https://github.com/coreos/capnslog), logging should
+serve the project it uses well: the main entry point should determine the
+logging configuration of its imports, and moreover do so in a way that is
+runtime configurable.
 
-However, logging has a evolved a lot since the standard library logging
-interface.  First, structured logging has become the norm for newer
-applications, perhaps due to the nature of logging in cloud distributed systems
-such as Kubernetes.  Second, as observed by
-[capnslog](https://github.com/coreos/capnslog), logging should serve the project
-it uses well: the main entry point should determine the logging configuration of
-its imports, and moreover do so in a way that is runtime configurable.
+If projects A and B organise their logging differently, and project C would
+like to use A and B and yet manage the logging, L can be used to resolve the
+differences between A and B and C's desired logging setup.  In other words, if
+you would like your project to be used in other projects with distinct logging
+styles, and you find L worthy enough in its current nascent state, the L can do
+that.
 
-Unfortunately, all the libraries out there seem to use the idea of the global
-logger, where this state can be changed, and often is, inside library code.
-
+L permits flexible per-project configuration in a way that can be overriden by
+a main entrypoint, viewed, and (in progress) manipulated via an authenticated
+RPC service accessible via an HTTP gateway at runtime.
 
 L provides
 
@@ -28,8 +28,9 @@ L provides
 - The ability for the main entry point to determine and set up configuration
   for all Loggers in all packages it depends on.
 - The ability for a package to define its own default configuration.
-- Support for _hooks_ aka MiddleWare.
-- An admin interface for manipulating labels in a Go process.
+- Support for MiddleWare.
+- An HMAC authenticated jsonrpc service exposed via HTTP for viewing (and, coming soon:
+manipulating logs). 
 
 ## Working with L
 
@@ -37,13 +38,18 @@ To use L in some package, simply import L and call L.New(cfg) with
 your desired configuration.  This should normally done at the top level
 of each package once.
 
+If you would like to further facilitate the use of your project within
+projects with different logging styles/criteria, then simply describe
+your logging setup and make this description part of your release process.
+
+Other projects can then use L to set your logging to their conventions.
+
 ## Basic structured logging
 
-Structured logging is about providing structured output, which is 
-typically fairly unstructured actually and refers to anything that 
-can be viewed as a `map[string]any`, where `any` is any ground type
-or another `map[string]any` or a slice of values, i.e. Go's representation
-of free form json objects.
+Structured logging is about providing structured output, which is typically
+fairly unstructured actually and refers to anything that can be viewed as a
+`map[string]any`, where `any` is any ground type or another `map[string]any` or
+a slice of values, i.e. Go's representation of free form json objects.
 
 ```go
 // log a field {"k": 77}
@@ -60,55 +66,29 @@ myL.Dict().Field("k", 3).Set(
 	myL.Array().Str("a").Int(4)).
 	Log()
 
-// slower, but easier on the eyes
-myL.Fmt(`{"k": %d, %q: [ "%s", %d ] }`, 3, "key", "a", 4) 
+// log a string
+myl.Str("hello").Log()
 
+// add any fields you can with defer
+func F() {
+	obj := myL.Dict()
+	defer obj.Log()
+	//
+	obj.Field("func", "F")
+	//
+	//
+}
 ```
-
-## Custom Log project-native types
-
-L provides a means to avoid copying your native types at 
-all their points they are used and logged, as this clearly is tedious.
-
-The idea is simple:  define a json Unmarshaler for a type and then call
-```
-v := &T{...}
-obj.JSON(v)
-```
-
-Note that there are libraries to autogenerate marshalers, and also
-one can easily enough define an alternate marshaler for logging specific purposes.
-
-The distinction that L makes here is that if `v` does not implement json.Marshaler,
-then the program will fail to compile.  The restriction helps to guarantee that logging
-is fast.
-
-
 
 ### Overriding the configuration at the entry point
 
-The entry point can set the configuration for all
+The entry point can manipulate the configuration for all
 imported packages, transitively by calling `L.Apply(...)`:
 ```
 import "github.com/scott-cotton/L"
 
 L.Apply(MyAppConfig())
 ```
-
-In this context, the meaning of the labels is as follows:
-a label key is a regular expression which 
-- a label value is an indication of whether or not labels matched 
-with the corresponding key should be kept.  It can contain package names
-- deletion takes precedence over insertion, so setting the value to
-  false in the label map will always delete the corresponding matched
-  keys.
-
-This allows for the application of labels accross all packages following
-a project policy.
-
-Applying a config allows setting middleware for pre- and post-processing.
-nil values for the middleware, .E, .F, and .W attributes will not overwrite
-package-specified ones.
 
 
 ### Levelled Logging
@@ -134,7 +114,8 @@ have efficient levelled logging.
 The idea is that for a project which wants to define its own levels, the project
 defines a project specific level key and associated integer values.
 
-[this test file](levels_test.go) contains a full working example.
+[this test file](https://github.com/scott-cotton/L/blob/main/labels_test.go)
+contains a full working example.
 
 This mechanism is dynamic.  At runtime, you can set the logging to a given
 level.  For example, you can automatically increase the level if the frequency
