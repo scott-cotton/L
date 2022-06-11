@@ -16,6 +16,7 @@ func EFatal(c *Config, e error) {
 // ELog is a Config.E that safely logs the error 'e' in a dict with key '"LE"'.
 func ELog(c *Config, e error) {
 	l := New(c)
+	defer l.Close()
 	ev := l.Dict()
 	ev.Field("LE", e.Error())
 	l.Log(ev)

@@ -50,11 +50,7 @@ func NewConfig(labels ...string) *Config {
 		pkg:    pkg,
 	}
 	for _, lbl := range labels {
-		key := lbl
-		if lbl != "" && lbl[0] == '.' {
-			key = pkg + lbl
-		}
-		c.Labels[key] = 0
+		c.Labels[c.Unlocalize(lbl)] = 0
 	}
 	return c
 }
@@ -113,6 +109,9 @@ func (c *Config) Apply(o *Config) {
 		}
 	}
 	for k, v := range o.Labels {
+		if k == "Lset" {
+			continue
+		}
 		c.Labels[c.Unlocalize(k)] = v
 	}
 }

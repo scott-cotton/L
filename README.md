@@ -130,4 +130,11 @@ L provides more general middleware for filtering logging.
 L provides middleware for filtering, handling special events, adding
 custom automatic fields, etc.
 
+Middleware is extremely powerful.  In addition to automatic fields,
+it can be used for filtering, to adaptively change the log level,
+to sample logs, to set up alerts, to set up metrics such as prometheus
+or expvar, etc.
+
+Middleware is invoked when the associated logger is locked.
+
 
