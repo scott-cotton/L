@@ -7,7 +7,7 @@ import (
 
 // Middleware is a type for hooks into Loggers'
 // configuration.
-type Middleware func(Logger, *Config, *Obj) *Obj
+type Middleware func(*Config, *Obj) *Obj
 
 // Pkg() is a Middleware which injects a field
 // with key "Lpkg" and value of the package path
@@ -20,7 +20,7 @@ func Pkg() Middleware {
 	if i != -1 {
 		pkg = fn[:i]
 	}
-	return func(_ Logger, _ *Config, o *Obj) *Obj {
+	return func(_ *Config, o *Obj) *Obj {
 		return o.Field("Lpkg", pkg)
 	}
 }
@@ -33,7 +33,7 @@ func Pkg() Middleware {
 // eliminated in addition to the overhead of
 // message writing.
 func If(label string) Middleware {
-	return func(ell Logger, cfg *Config, o *Obj) *Obj {
+	return func(cfg *Config, o *Obj) *Obj {
 		if _, present := cfg.Labels[label]; present {
 			return o
 		}
@@ -42,7 +42,7 @@ func If(label string) Middleware {
 }
 
 func IfNot(label string) Middleware {
-	return func(ell Logger, cfg *Config, o *Obj) *Obj {
+	return func(cfg *Config, o *Obj) *Obj {
 		if _, present := cfg.Labels[label]; present {
 			return nil
 		}
@@ -51,7 +51,7 @@ func IfNot(label string) Middleware {
 }
 
 func Leq(label string, value int) Middleware {
-	return func(ell Logger, cfg *Config, o *Obj) *Obj {
+	return func(cfg *Config, o *Obj) *Obj {
 		if cfg.Labels[label] <= value {
 			return o
 		}
@@ -60,7 +60,7 @@ func Leq(label string, value int) Middleware {
 }
 
 func Geq(label string, value int) Middleware {
-	return func(ell Logger, cfg *Config, o *Obj) *Obj {
+	return func(cfg *Config, o *Obj) *Obj {
 		if cfg.Labels[label] >= value {
 			return o
 		}
@@ -69,7 +69,7 @@ func Geq(label string, value int) Middleware {
 }
 
 func Label(label string) Middleware {
-	return func(ell Logger, cfg *Config, o *Obj) *Obj {
+	return func(cfg *Config, o *Obj) *Obj {
 		return o.Field(label, cfg.Labels[label])
 	}
 }

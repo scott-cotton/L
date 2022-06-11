@@ -34,7 +34,7 @@ func (lvl LogLevel) String() string {
 // set output to a global buffer for testing.
 var lvlW = bytes.NewBuffer(nil)
 
-func tagLevel(l L.Logger, cfg *L.Config, o *L.Obj) *L.Obj {
+func tagLevel(cfg *L.Config, o *L.Obj) *L.Obj {
 	v := cfg.Labels["Lop"]
 	if v == 0 {
 		return o
@@ -42,7 +42,7 @@ func tagLevel(l L.Logger, cfg *L.Config, o *L.Obj) *L.Obj {
 	return o.Field("Lop", LogLevel(v).String())
 }
 
-func filterLevel(l L.Logger, cfg *L.Config, o *L.Obj) *L.Obj {
+func filterLevel(cfg *L.Config, o *L.Obj) *L.Obj {
 	v := cfg.Labels["Lop"]
 	if v == 0 {
 		return o
@@ -53,9 +53,9 @@ func filterLevel(l L.Logger, cfg *L.Config, o *L.Obj) *L.Obj {
 	return nil
 }
 
-func LConfig(lvl LogLevel) *L.Config {
+func LConfig() *L.Config {
 	res := &L.Config{
-		Labels: map[string]int{"Lop": int(lvl)},
+		Labels: map[string]int{"Lop": int(Level)},
 		W:      lvlW,
 		F:      L.JSONFmter(),
 		E:      L.EPanic,
@@ -65,10 +65,13 @@ func LConfig(lvl LogLevel) *L.Config {
 	return res
 }
 
+// global variable can be set at runtime.
+// to expose this via the L service,
+// one would put the value in a tag.
 var Level = Debug
 
 var (
-	Ldebug  = L.New(LConfig(Level))
+	Ldebug  = L.New(LConfig())
 	Ltrace  = Ldebug.With("Lop", int(Trace))
 	Lnotice = Ldebug.With("Lop", int(Notice))
 	Linfo   = Ltrace.With("Lop", int(Info))

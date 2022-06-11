@@ -82,7 +82,7 @@ func (l *logger) Log(o *Obj) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	for _, mw := range l.config.Post {
-		o = mw(l, l.config, o)
+		o = mw(l.config, o)
 	}
 	if err := o.Close(); err != nil {
 		if l.config.E != nil {
@@ -161,6 +161,9 @@ func (l *logger) unlink(c *logger) {
 // Close closes the logger.  close does not close the associated
 // Writer in the config.
 func (l *logger) Close() error {
+	if l == nil {
+		return nil
+	}
 	if l.parent == nil {
 		return nil
 	}
@@ -169,11 +172,14 @@ func (l *logger) Close() error {
 }
 
 func (l *logger) obj() *Obj {
+	if l == nil {
+		return nil
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	res := &Obj{logger: l}
 	for _, mw := range l.config.Pre {
-		res = mw(l, l.config, res)
+		res = mw(l.config, res)
 	}
 	return res
 }

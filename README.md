@@ -2,6 +2,8 @@
 
 L is a minimalist project-aware structured logger for Go.
 
+[![GoDoc](https://godoc.org/github.com/scott-cotton/L?status.svg)](https://godoc.org/github.com/scott-cotton/L)
+
 ## Why?
 
 As observed by [capnslog](https://github.com/coreos/capnslog), logging should
@@ -122,3 +124,10 @@ level.  For example, you can automatically increase the level if the frequency
 of errors goes above some threshold.
 
 L provides more general middleware for filtering logging.
+
+## Middleware
+
+L provides middleware for filtering, handling special events, adding
+custom automatic fields, etc.
+
+

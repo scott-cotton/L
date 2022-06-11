@@ -104,13 +104,16 @@ func (c *Config) Apply(o *Config) {
 	if c.Labels == nil {
 		c.Labels = make(map[string]int, len(o.Labels))
 	}
-	for k := range c.Labels {
-		if _, ok := o.Labels[c.Unlocalize(k)]; !ok {
-			delete(c.Labels, k)
+	_, set := o.Labels["Lset"]
+	if !set {
+		for k := range c.Labels {
+			if _, ok := o.Labels[c.Localize(k)]; !ok {
+				delete(c.Labels, k)
+			}
 		}
 	}
 	for k, v := range o.Labels {
-		c.Labels[c.Localize(k)] = v
+		c.Labels[c.Unlocalize(k)] = v
 	}
 }
 
