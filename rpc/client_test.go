@@ -10,13 +10,14 @@ func TestClient(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	lr, err := client.Loggers()
+	lr, err := client.Loggers(".*")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	res, err := lr.GetResult()
 	if err != nil {
+		t.Logf("%#v", lr)
 		t.Error(err)
 		return
 	}

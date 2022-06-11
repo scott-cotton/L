@@ -1,7 +1,7 @@
 package rpc
 
 type LoggersRequest struct {
-	Request[[]string]
+	Request[string]
 }
 
 type LoggersResponse struct {

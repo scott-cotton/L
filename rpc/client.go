@@ -20,12 +20,11 @@ func NewClient(key, addr string) (*Client, error) {
 	return res, nil
 }
 
-func (c *Client) Loggers() (*LoggersResponse, error) {
+func (c *Client) Loggers(pat string) (*LoggersResponse, error) {
 	c.Lock()
 	defer c.Unlock()
 	// construct LoggersRequest
-	search := []string{".*L"}
-	req, err := NewRequest[[]string](c.getID(), "loggers", &search)
+	req, err := NewRequest[string](c.getID(), "loggers", &pat)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing jsonrpc request: %w", err)
 	}

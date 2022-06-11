@@ -40,9 +40,9 @@ func (s *Server) ServiceHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	switch r.Method {
 	case "loggers":
-		lr := (*Request[[]string])(r)
+		lr := (*Request[string])(r)
 		_ = lr
-		parms, err := lr.GetParams()
+		pat, err := lr.GetParams()
 		if err != nil {
 			w.WriteHeader(http.StatusOK)
 			resp := ErrorResponse(r.ID, 1, err.Error())
@@ -51,7 +51,7 @@ func (s *Server) ServiceHandler(w http.ResponseWriter, req *http.Request) {
 			}
 			return
 		}
-		res, err := L.Match(*parms)
+		res, err := L.Match(*pat)
 		if err != nil {
 			w.WriteHeader(http.StatusOK)
 			resp := ErrorResponse(r.ID, 1, err.Error())

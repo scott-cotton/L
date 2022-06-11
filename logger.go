@@ -212,43 +212,37 @@ func (l *logger) Bytes(d []byte) *Obj {
 	return l.obj().Bytes(d)
 }
 
-func Match(pats []string) (map[string]map[string]int, error) {
-	return root.Match(pats)
+func Match(pat string) (map[string]map[string]int, error) {
+	return root.Match(pat)
 }
 
-func (l *logger) Match(pats []string) (map[string]map[string]int, error) {
-	res := make([]*regexp.Regexp, 0, len(pats))
-	for _, p := range pats {
-		re, err := regexp.Compile(p)
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, re)
+func (l *logger) Match(pat string) (map[string]map[string]int, error) {
+	re, err := regexp.Compile(pat)
+	if err != nil {
+		return nil, err
 	}
-	return l.match(nil, res), nil
+	return l.match(nil, re), nil
 }
 
-func (l *logger) match(dst map[string]map[string]int, pats []*regexp.Regexp) map[string]map[string]int {
+func (l *logger) match(dst map[string]map[string]int, pat *regexp.Regexp) map[string]map[string]int {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	if dst == nil {
 		dst = map[string]map[string]int{}
 	}
-	for _, p := range pats {
-		for k, v := range l.config.Labels {
-			if !p.MatchString(k) {
-				continue
-			}
-			pMap := dst[l.config.pkg]
-			if pMap == nil {
-				pMap = map[string]int{}
-				dst[l.config.pkg] = pMap
-			}
-			pMap[l.config.Localize(k)] = v
+	for k, v := range l.config.Labels {
+		if !pat.MatchString(k) {
+			continue
 		}
+		pMap := dst[l.config.pkg]
+		if pMap == nil {
+			pMap = map[string]int{}
+			dst[l.config.pkg] = pMap
+		}
+		pMap[l.config.Localize(k)] = v
 	}
 	for k := range l.children {
-		k.match(dst, pats)
+		k.match(dst, pat)
 	}
 	return dst
 }
