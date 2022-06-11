@@ -49,16 +49,18 @@ func LConfig(lvl LogLevel) *L.Config {
 		F:      L.JSONFmter(),
 		E:      L.EPanic,
 		Pre: []L.Middleware{
-			L.Geq("Lop", int(lvl)),
+			L.Leq("Lop", int(lvl)),
 		},
 		Post: []L.Middleware{L.Pkg(), tagLevel},
 	}
 	return res
 }
 
+var Level = Debug
+
 var (
-	Ltrace  = L.New(LConfig(Trace))
-	Ldebug  = Ltrace.With("Lop", int(Debug))
+	Ldebug  = L.New(LConfig(Level))
+	Ltrace  = Ldebug.With("Lop", int(Trace))
 	Lnotice = Ldebug.With("Lop", int(Notice))
 	Linfo   = Ltrace.With("Lop", int(Info))
 	Lwarn   = Ltrace.With("Lop", int(Warn))
@@ -68,10 +70,10 @@ var (
 
 func Example_levels() {
 	Ltrace.Dict().Field("hello-trace", 22).Log()
-	Ldebug.Dict().Field("hello-trace", 33).Log()
+	Ldebug.Dict().Field("hello-debug", 33).Log()
 	fmt.Printf("%s\n", lvlW.String())
 
 	// Output:
-	// {"hello-trace":22,"Lpkg":"github.com/scott-cotton/L_test","Lop":"trace"}
+	// {"hello-debug":33,"Lpkg":"github.com/scott-cotton/L_test","Lop":"debug"}
 
 }
