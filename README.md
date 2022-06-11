@@ -114,7 +114,7 @@ have efficient levelled logging.
 The idea is that for a project which wants to define its own levels, the project
 defines a project specific level key and associated integer values.
 
-[this test file](https://github.com/scott-cotton/L/blob/main/labels_test.go)
+[this test file](https://github.com/scott-cotton/L/blob/main/level_test.go)
 contains a full working example.
 
 This mechanism is dynamic.  At runtime, you can set the logging to a given
