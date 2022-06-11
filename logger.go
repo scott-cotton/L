@@ -86,7 +86,7 @@ func (l *logger) Log(o *Obj) {
 	}
 	if err := o.Close(); err != nil {
 		if l.config.E != nil {
-			l.config.E(l, l.config, err)
+			l.config.E(l.config, err)
 		}
 		return
 	}

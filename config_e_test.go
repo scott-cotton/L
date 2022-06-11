@@ -11,9 +11,7 @@ var eW = bytes.NewBuffer(nil)
 var cfg = &L.Config{
 	W: eW,
 	F: L.JSONFmter(),
-	E: func(l L.Logger, _ *L.Config, e error) {
-		fmt.Printf("logger couldn't log obj: %s", e.Error())
-	},
+	E: L.ELog,
 }
 
 var eL = L.New(cfg)
@@ -24,5 +22,5 @@ func Example_configE() {
 	fmt.Printf("%s\n", eW.String())
 
 	// Output:
-	// logger couldn't log obj: invalid character ',' after top-level value
+	// {"LE":"invalid character ',' after top-level value"}
 }

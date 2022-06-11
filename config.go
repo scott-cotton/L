@@ -26,7 +26,7 @@ type Config struct {
 	F Fmter
 	// E is a handler for any errors which occur during
 	// formatting.
-	E func(Logger, *Config, error)
+	E func(*Config, error)
 
 	pkg string
 }
