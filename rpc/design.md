@@ -58,12 +58,41 @@ Request
 	"method": "apply",
 	"params": {
 		"pkgPattern": "github.com/scott-cotton/L": 
-		"labels": {
-			// add this label only set, do not replace
-			"Lset": 1,
-			"zebra": 1010
+		"opts": {
+			"removeAbsentLabels": true
+		},
+		"config": {
+			"labels": {
+				"zebra": 1010
+			}
 		}
 	}
+}
+```
+
+- pkgPattern indicates which packages to match.
+- opts is an "github.com/scott-cotton/L".ApplyOpts object, but it is always recursive.
+- config is a configuration object.  Currrently, this contains only labels.  Later
+we will consider adding formatters, writers, and middleware via registration.
+
+Response
+
+The response is in the same form as a loggers response, except each result
+item does not have a "parent" field and the array does not represent a tree.
+Instead, the array contains each modified configuration.
+```json
+{
+	"jsonrpc": "2.0",
+	"id": <id>,
+	"result": [
+		{
+			"pkg": "github.com/scott-cotton/L",
+			"labels": {
+				"a": 10,
+				"b": 11
+			}
+		}
+	]
 }
 ```
 

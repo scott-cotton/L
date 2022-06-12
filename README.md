@@ -15,11 +15,11 @@ If projects A and B organise their logging differently, and project C would
 like to use A and B and yet manage the logging, L can be used to resolve the
 differences between A and B and C's desired logging setup.  In other words, if
 you would like your project to be used in other projects with distinct logging
-styles, and you find L worthy enough in its current nascent state, the L can do
+styles, and you find L worthy enough in its current nascent state, then L can do
 that.
 
 L permits flexible per-project configuration in a way that can be overriden by
-a main entrypoint, viewed, and (in progress) manipulated via an authenticated
+a main entrypoint, viewed, and manipulated via an authenticated
 RPC service accessible via an HTTP gateway at runtime.
 
 L provides
@@ -89,7 +89,7 @@ imported packages, transitively by calling `L.Apply(...)`:
 ```
 import "github.com/scott-cotton/L"
 
-L.Apply(MyAppConfig())
+L.Apply(MyAppConfig(), nil)
 ```
 
 
@@ -135,7 +135,8 @@ it can be used for filtering, to adaptively change the log level,
 to sample logs, to set up alerts, to set up metrics such as prometheus
 or expvar, etc.
 
-Middleware is invoked when the associated logger is locked.
+Middleware is invoked when the associated logger is locked, and has
+full access to the associated log config labels, see below.
 
 ## Labels
 
