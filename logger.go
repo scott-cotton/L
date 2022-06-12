@@ -26,6 +26,8 @@ type Logger interface {
 	// to `ApplyConfig(cfg, &ApplyOpts{})`.
 	ApplyConfig(cfg *Config, opts *ApplyOpts)
 
+	// Walk performs a pre-order traversal of the logger tree, applying
+	// 'fn' to each logger's configuration in the logger tree.
 	Walk(func(*Config))
 
 	// ConfigTree appends a sub-tree of configurations corresponding
@@ -126,6 +128,7 @@ func (l *logger) Log(o *Obj) {
 	}
 }
 
+// Walk calls Logger.Walk from the root logger.
 func (l *logger) Walk(fn func(*Config)) {
 	if l == nil {
 		return
@@ -259,6 +262,7 @@ func ConfigTree() []ConfigNode {
 	return root.ConfigTree(nil)
 }
 
+// Walk calls Logger.Walk from the root logger.
 func Walk(fn func(*Config)) {
 	root.Walk(fn)
 }
