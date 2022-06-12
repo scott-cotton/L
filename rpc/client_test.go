@@ -7,6 +7,10 @@ import (
 )
 
 func TestClient(t *testing.T) {
+	if os.Getenv("LSERVE") == "" {
+		t.Logf("set LSERVE=1 to run")
+		return
+	}
 	client, err := NewClient("abc", "http://localhost:4321/L")
 	if err != nil {
 		t.Error(err)
