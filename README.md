@@ -167,4 +167,9 @@ many projects are not suited to depending on a 3rd party monitoring
 service.  L can work out of the box, integrating your monitoring and remote
 debugability in a single library.
 
+## RPC Service
+
+Please see [the design doc](https://github.com/scott-cotton/L/blob/main/rpc/design.md)
+
+
 
