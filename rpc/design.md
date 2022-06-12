@@ -24,7 +24,6 @@ Request
 	"jsonrpc": "2.0",
 	"id": <id>,
 	"method": "loggers",
-	"params": "github.com/.*"
 }
 ```
 
@@ -34,12 +33,14 @@ Response
 	"jsonrpc": "2.0",
 	"id": <id>,
 	"result": [
-		// index of parent
-		"parent": 0, 
-		"pkg": "github.com/scott-cotton/L",
-		"labels": {
-			"a": 10,
-			"b": 11
+		{
+			// index of parent
+			"parent": 0, 
+			"pkg": "github.com/scott-cotton/L",
+			"labels": {
+				"a": 10,
+				"b": 11
+			}
 		}
 	]
 }

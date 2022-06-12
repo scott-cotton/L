@@ -1,9 +1,11 @@
 package rpc
 
+import "github.com/scott-cotton/L"
+
 type LoggersRequest struct {
-	Request[string]
+	Request[struct{}]
 }
 
 type LoggersResponse struct {
-	Response[map[string]map[string]int]
+	Response[[]L.ConfigNode]
 }

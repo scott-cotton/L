@@ -1,6 +1,7 @@
 package L
 
 import (
+	"encoding/json"
 	"io"
 	"os"
 	"runtime"
@@ -11,24 +12,32 @@ import (
 type Config struct {
 	// Labels represents the set of labels associated with
 	// a logger.
-	Labels map[string]int
+	Labels map[string]int `json:"labels,omitempty"`
 
 	// Pre is a sequence of Middlewares to pre-process
 	// loggable objects.
-	Pre []Middleware
+	Pre []Middleware `json:"-"`
 	// Post is a sequence of Middlewares to post-process
 	// loggable objects.  Post middlewares are called
 	// after .Log() and before .F.Fmt().
-	Post []Middleware
+	Post []Middleware `json:"-"`
 	// W is the writer for this logger.
-	W io.Writer
+	W io.Writer `json:"-"`
 	// F is a Fmter for the logger.
-	F Fmter
+	F Fmter `json:"-"`
 	// E is a handler for any errors which occur during
 	// formatting.
-	E func(*Config, error)
+	E func(*Config, error) `json:"-"`
 
 	pkg string
+}
+
+func (c *Config) String() string {
+	d, e := json.Marshal(c)
+	if e != nil {
+		panic(e)
+	}
+	return string(d)
 }
 
 // NewConfig returns a *Config with the associated labels.  The labels are
@@ -116,6 +125,8 @@ func (c *Config) Apply(o *Config) {
 	}
 }
 
+// Unlocalize prefix label with the c's package if
+// label starts with '.'.
 func (c *Config) Unlocalize(label string) string {
 	if label != "" && label[0] == '.' {
 		return c.pkg + label
@@ -123,6 +134,8 @@ func (c *Config) Unlocalize(label string) string {
 	return label
 }
 
+// localize strips the prefix '<pkg>.' if label
+// starts with c's package.
 func (c *Config) Localize(label string) string {
 	if strings.HasPrefix(label, c.pkg+".") {
 		return label[len(c.pkg)+1:]
@@ -134,4 +147,22 @@ func (c *Config) Localize(label string) string {
 // from the last call to Apply, if any.
 func CurrentRootConfig() *Config {
 	return root.ReadConfig()
+}
+
+func (c *Config) Package() string {
+	return c.pkg
+}
+
+type ConfigNode struct {
+	Config
+	Package string `json:"package"`
+	Parent  int    `json:"parent"`
+}
+
+func (c *ConfigNode) String() string {
+	d, e := json.Marshal(c)
+	if e != nil {
+		panic(e)
+	}
+	return string(d)
 }

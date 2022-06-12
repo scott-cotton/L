@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"encoding/json"
+	"os"
 	"testing"
 )
 
@@ -21,5 +23,7 @@ func TestClient(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	t.Logf("%v\n", res)
+	jenc := json.NewEncoder(os.Stdout)
+	jenc.SetIndent("", "  ")
+	jenc.Encode(res)
 }

@@ -3,7 +3,6 @@ package L
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"runtime"
 	"strings"
 	"sync"
@@ -24,6 +23,10 @@ type Logger interface {
 	// children where 'lc' is the config associated with this logger, or in
 	// recursive application, the child logger.
 	ApplyConfig(cfg *Config)
+
+	// ConfigTree appends a sub-tree of configurations corresponding
+	// to this logger to dst
+	ConfigTree(dst []ConfigNode) []ConfigNode
 
 	// With returns a child logger with the same configuration
 	// as this logger but which additionally has the specified
@@ -71,6 +74,27 @@ func (l *logger) ReadConfig() *Config {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	return l.config.Clone()
+}
+
+func (l *logger) ConfigTree(dst []ConfigNode) []ConfigNode {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	cfg := l.config.Clone()
+	parent := -1
+	if l.parent != nil {
+		parent = l.parent.i
+	}
+	node := ConfigNode{
+		Config:  *cfg,
+		Parent:  parent,
+		Package: cfg.pkg,
+	}
+	l.i = len(dst)
+	dst = append(dst, node)
+	for k := range l.children {
+		dst = k.ConfigTree(dst)
+	}
+	return dst
 }
 
 // Log closes 'o' and if that results in an error 'e', it calls
@@ -213,37 +237,6 @@ func (l *logger) Bytes(d []byte) *Obj {
 	return l.obj().Bytes(d)
 }
 
-func Match(pat string) (map[string]map[string]int, error) {
-	return root.Match(pat)
-}
-
-func (l *logger) Match(pat string) (map[string]map[string]int, error) {
-	re, err := regexp.Compile(pat)
-	if err != nil {
-		return nil, err
-	}
-	return l.match(nil, re), nil
-}
-
-func (l *logger) match(dst map[string]map[string]int, pat *regexp.Regexp) map[string]map[string]int {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	if dst == nil {
-		dst = map[string]map[string]int{}
-	}
-	for k, v := range l.config.Labels {
-		if !pat.MatchString(k) {
-			continue
-		}
-		pMap := dst[l.config.pkg]
-		if pMap == nil {
-			pMap = map[string]int{}
-			dst[l.config.pkg] = pMap
-		}
-		pMap[l.config.Localize(k)] = v
-	}
-	for k := range l.children {
-		k.match(dst, pat)
-	}
-	return dst
+func ConfigTree() []ConfigNode {
+	return root.ConfigTree(nil)
 }

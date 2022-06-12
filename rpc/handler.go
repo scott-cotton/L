@@ -40,27 +40,8 @@ func (s *Server) ServiceHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	switch r.Method {
 	case "loggers":
-		lr := (*Request[string])(r)
-		_ = lr
-		pat, err := lr.GetParams()
-		if err != nil {
-			w.WriteHeader(http.StatusOK)
-			resp := ErrorResponse(r.ID, 1, err.Error())
-			if err := ToWriter(s.key, w, resp); err != nil {
-				s.HTTPError(w, err)
-			}
-			return
-		}
-		res, err := L.Match(*pat)
-		if err != nil {
-			w.WriteHeader(http.StatusOK)
-			resp := ErrorResponse(r.ID, 1, err.Error())
-			if err := ToWriter(s.key, w, resp); err != nil {
-				s.HTTPError(w, err)
-			}
-			return
-		}
-		rpcResp, err := NewResponse[map[string]map[string]int](r.ID, "loggers", &res)
+		tree := L.ConfigTree()
+		rpcResp, err := NewResponse[[]L.ConfigNode](r.ID, "loggers", &tree)
 		if err != nil {
 			panic(err)
 		}

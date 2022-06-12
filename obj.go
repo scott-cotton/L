@@ -142,7 +142,7 @@ func (t *Obj) Field(s string, v any) *Obj {
 		t.WriteByte(',')
 	}
 	t.hadChild = false
-	t = t.Str(s).WriteByte(':')
+	t.Str(s).WriteByte(':')
 	t.hadChild = false
 	switch x := v.(type) {
 	case bool:
@@ -302,13 +302,13 @@ func (t *Obj) D() []byte {
 }
 
 // WriteByte writes b to the underlying []byte.
-func (t *Obj) WriteByte(b byte) *Obj {
+func (t *Obj) WriteByte(b byte) error {
 	if t == nil {
 		return nil
 	}
 	r := t.buf()
 	*r = append(*r, b)
-	return t
+	return nil
 }
 
 // Null writes 'null' to the underlying []byte.
