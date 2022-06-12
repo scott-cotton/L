@@ -10,10 +10,6 @@ The service is comprised of 2 methods:
 1. "apply", a method for applying a configuration using [configuration
    apply](https://pkg.go.dev/github.com/scott-cotton/L#Config.Apply)
 
-## status
-
-This package is under development, some of the functionality below does
-not yet exist.
 
 ## loggers
 

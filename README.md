@@ -85,12 +85,18 @@ func F() {
 ### Overriding the configuration at the entry point
 
 The entry point can manipulate the configuration for all
-imported packages, transitively by calling `L.Apply(...)`:
+imported packages, transitively by calling [`L.Apply(...)`](https://pkg.go.dev/github.com/scott-cotton/L#ApplyConfig)`:
 ```
 import "github.com/scott-cotton/L"
 
-L.Apply(MyAppConfig(), nil)
+L.Apply(MyAppConfig(), &L.ApplyOpts{Recursive: true})
 ```
+
+`Apply` can either overwrite the configuration of all
+`L` loggers or set specific variables.
+
+More dynamic and fine-grained control is available via 
+[`Walk`](https://pkg.go.dev/github.com/scott-cotton/L#Walk).
 
 
 ### Levelled Logging
