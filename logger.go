@@ -46,6 +46,7 @@ type logger struct {
 	parent   *logger
 	config   *Config
 	children map[*logger]struct{}
+	i        int
 }
 
 func (l *logger) With(key string, v int) Logger {
