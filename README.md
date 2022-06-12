@@ -137,4 +137,34 @@ or expvar, etc.
 
 Middleware is invoked when the associated logger is locked.
 
+## Labels
+
+Labels are the bread and butter of configuring and manipulating L loggers.
+
+Labels are first of all just a `map[string]int`, associated with every `Config`
+object.  There is a distinct config object for every logger, so we have a 1-1
+relation between label maps and loggers.
+
+Label keys concretely form a single global namespace for configuring loggers.
+These keys, however, can be package qualified and used with or without
+knowledge of the package names in play.
+
+A label that starts with a '.' is considered a pattern for \<pkgname\>.  This
+way, when setting labels or searching for loggers' configurations, one can
+either find all loggers with a given package-qualified label, or search for
+global labels, or search for labels within a set of packages.
+
+Labels are integer valued, which is adapted (thus far) to most uses and remains
+a simple atomic type.  This simplicity also aids in the specification of a 
+logger.
+
+Labels are available to middleware for reading and writing, so they can be used
+to auto-monitor error rates or to dynamically trigger increased verbosity
+localized to a specific functionality.
+
+While many projects use a full fledged monitoring solution such as prometheus, 
+many projects are not suited to depending on a 3rd party monitoring
+service.  L can work out of the box, integrating your monitoring and remote
+debugability in a single library.
+
 
