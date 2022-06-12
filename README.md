@@ -85,14 +85,14 @@ func F() {
 ### Overriding the configuration at the entry point
 
 The entry point can manipulate the configuration for all
-imported packages, transitively by calling [`L.Apply(...)`](https://pkg.go.dev/github.com/scott-cotton/L#ApplyConfig)`:
+imported packages, transitively by calling [`L.ApplyConfig(...)`](https://pkg.go.dev/github.com/scott-cotton/L#ApplyConfig)`:
 ```
 import "github.com/scott-cotton/L"
 
-L.Apply(MyAppConfig(), &L.ApplyOpts{Recursive: true})
+L.ApplyConfig(MyAppConfig(), &L.ApplyOpts{Recursive: true})
 ```
 
-`Apply` can either overwrite the configuration of all
+`ApplyConfig` can either overwrite the configuration of all
 `L` loggers or set specific variables.
 
 More dynamic and fine-grained control is available via 
@@ -127,9 +127,12 @@ contains a full working example.
 
 This mechanism is dynamic.  At runtime, you can set the logging to a given
 level.  For example, you can automatically increase the level if the frequency
-of errors goes above some threshold.
+of errors goes above some threshold.  The L implementation eliminates the 
+processing time of construction of loggable objects when filtering messages
+in this way.
 
-L provides more general middleware for filtering logging.
+L provides more general middleware for filtering logging, with the same
+performance considerations.
 
 ## Middleware
 
