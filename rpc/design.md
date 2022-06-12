@@ -22,7 +22,7 @@ Request
 ```json
 {
 	"jsonrpc": "2.0",
-	"id": <id>,
+	"id": 123,
 	"method": "loggers",
 }
 ```
@@ -31,10 +31,9 @@ Response
 ```json
 {
 	"jsonrpc": "2.0",
-	"id": <id>,
+	"id": 123,
 	"result": [
 		{
-			// index of parent
 			"parent": 0, 
 			"pkg": "github.com/scott-cotton/L",
 			"labels": {
@@ -54,7 +53,7 @@ Request
 ```
 {
 	"jsonrpc": "2.0",
-	"id": <id>,
+	"id": 456,
 	"method": "apply",
 	"params": {
 		"pkgPattern": "github.com/scott-cotton/L": 
@@ -83,7 +82,7 @@ Instead, the array contains each modified configuration.
 ```json
 {
 	"jsonrpc": "2.0",
-	"id": <id>,
+	"id": 456,
 	"result": [
 		{
 			"pkg": "github.com/scott-cotton/L",
