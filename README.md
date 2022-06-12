@@ -31,8 +31,8 @@ L provides
   for all Loggers in all packages it depends on.
 - The ability for a package to define its own default configuration.
 - Support for MiddleWare.
-- An HMAC authenticated jsonrpc service exposed via HTTP for viewing (and, coming soon:
-manipulating logs). 
+- An HMAC authenticated jsonrpc service exposed via HTTP for viewing and
+manipulating logs. 
 
 ## Working with L
 
