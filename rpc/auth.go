@@ -15,14 +15,14 @@ type msg[T any] struct {
 
 var ErrSignature = errors.New("ErrSignature")
 
-func FromReader[T any](key []byte, r io.Reader) (*T, error) {
+func fromReader[T any](key []byte, r io.Reader) (*T, error) {
 	var m msg[T]
 	if err := json.NewDecoder(r).Decode(&m); err != nil {
 		return nil, err
 	}
 	return m.Decode(key)
 }
-func ToWriter[T any](key []byte, w io.Writer, v *T) error {
+func toWriter[T any](key []byte, w io.Writer, v *T) error {
 	var (
 		m   msg[T]
 		err error

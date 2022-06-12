@@ -1,7 +1,6 @@
 package L
 
 import (
-	"encoding/json"
 	"io"
 	"os"
 	"runtime"
@@ -17,14 +16,18 @@ type Config struct {
 	// Pre is a sequence of Middlewares to pre-process
 	// loggable objects.
 	Pre []Middleware `json:"-"`
+
 	// Post is a sequence of Middlewares to post-process
 	// loggable objects.  Post middlewares are called
 	// after .Log() and before .F.Fmt().
 	Post []Middleware `json:"-"`
+
 	// W is the writer for this logger.
 	W io.Writer `json:"-"`
+
 	// F is a Fmter for the logger.
 	F Fmter `json:"-"`
+
 	// E is a handler for any errors which occur during
 	// formatting.
 	E func(*Config, error) `json:"-"`
@@ -32,18 +35,10 @@ type Config struct {
 	pkg string
 }
 
-func (c *Config) String() string {
-	d, e := json.Marshal(c)
-	if e != nil {
-		panic(e)
-	}
-	return string(d)
-}
-
 // NewConfig returns a *Config with the associated labels.  The labels are
 // subject to the following expansion rules
 //
-//  - a label starting with a colon ':' is prefixed with package name
+//  - a label starting with '.' is prefixed with package name.
 func NewConfig(labels ...string) *Config {
 	pc, _, _, _ := runtime.Caller(1)
 	fn := runtime.FuncForPC(pc).Name()
@@ -78,54 +73,7 @@ func (c *Config) Clone() *Config {
 	return res
 }
 
-// Apply applies the configuration o to c.  Fields
-// are copied over if they are not nil in o, otherwise
-// left untouched.  Labels in o should not include
-// the package name, but if they start with '.', they
-// are expanded with the package name of 'c' when
-// copied to c's Labels.
-//
-// if a label in 'c', with any package name stripped,
-// is not in o, then it is removed from c.
-func (c *Config) Apply(o *Config) {
-	if o.E != nil {
-		c.E = o.E
-	}
-	if o.W != nil {
-		c.W = o.W
-	}
-	if o.F != nil {
-		c.F = o.F
-	}
-	if o.Pre != nil {
-		c.Pre = append([]Middleware{}, o.Pre...)
-	}
-	if o.Post != nil {
-		c.Post = append([]Middleware{}, o.Post...)
-	}
-	if o.Labels == nil {
-		return
-	}
-	if c.Labels == nil {
-		c.Labels = make(map[string]int, len(o.Labels))
-	}
-	_, set := o.Labels["Lset"]
-	if !set {
-		for k := range c.Labels {
-			if _, ok := o.Labels[c.Localize(k)]; !ok {
-				delete(c.Labels, k)
-			}
-		}
-	}
-	for k, v := range o.Labels {
-		if k == "Lset" {
-			continue
-		}
-		c.Labels[c.Unlocalize(k)] = v
-	}
-}
-
-// Unlocalize prefix label with the c's package if
+// Unlocalize prefixes label with the c's package if
 // label starts with '.'.
 func (c *Config) Unlocalize(label string) string {
 	if label != "" && label[0] == '.' {
@@ -153,16 +101,12 @@ func (c *Config) Package() string {
 	return c.pkg
 }
 
-type ConfigNode struct {
+type PackageConfig struct {
 	Config
 	Package string `json:"package"`
-	Parent  int    `json:"parent"`
 }
 
-func (c *ConfigNode) String() string {
-	d, e := json.Marshal(c)
-	if e != nil {
-		panic(e)
-	}
-	return string(d)
+type ConfigNode struct {
+	PackageConfig
+	Parent int `json:"parent"`
 }

@@ -3,9 +3,7 @@ package rpc
 import "github.com/scott-cotton/L"
 
 type LoggersRequest struct {
-	Request[struct{}]
+	Request
 }
 
-type LoggersResponse struct {
-	Response[[]L.ConfigNode]
-}
+type LoggersResult []L.ConfigNode

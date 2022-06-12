@@ -6,27 +6,27 @@ import (
 	"fmt"
 )
 
-type Request[P any] struct {
+type Request struct {
 	ID     int    `json:"id"`
 	Method string `json:"method"`
 	Params []byte `json:"params,omitempty"`
 }
 
-func NewRequest[P any](id int, method string, p *P) (*Request[P], error) {
+func NewRequest[P any](id int, method string, p *P) (*Request, error) {
 	buf := bytes.NewBuffer(nil)
 	if err := json.NewEncoder(buf).Encode(p); err != nil {
 		return nil, err
 	}
-	return &Request[P]{
+	return &Request{
 		ID:     id,
 		Method: method,
 		Params: buf.Bytes(),
 	}, nil
 }
 
-func (r *Request[P]) GetParams() (*P, error) {
+func Params[P any](req *Request) (*P, error) {
 	var params P
-	err := json.Unmarshal(r.Params, &params)
+	err := json.Unmarshal(req.Params, &params)
 	if err != nil {
 		return nil, err
 	}
@@ -39,26 +39,26 @@ type Error struct {
 	Data    []byte `json:"data,omitempty"`
 }
 
-type Response[Result any] struct {
+type Response struct {
 	ID     int    `json:"id"`
 	Error  *Error `json:"error,omitempty"`
 	Result []byte `json:"result,omitempty"`
 }
 
-func NewResponse[Result any](id int, method string, r *Result) (*Response[Result], error) {
+func NewResponse[Result any](id int, r *Result) (*Response, error) {
 	buf := bytes.NewBuffer(nil)
 	if err := json.NewEncoder(buf).Encode(r); err != nil {
 		return nil, err
 	}
-	return &Response[Result]{
+	return &Response{
 		ID:     id,
 		Result: buf.Bytes(),
 	}, nil
 }
 
-func ErrorResponse(id, code int, msg string) *Response[any] {
+func ErrorResponse(id, code int, msg string) *Response {
 	fmt.Printf("ErrorResponse %d %d %s\n", id, code, msg)
-	return &Response[any]{
+	return &Response{
 		ID: id,
 		Error: &Error{
 			Code:    code,
@@ -67,9 +67,9 @@ func ErrorResponse(id, code int, msg string) *Response[any] {
 	}
 }
 
-func (r *Response[Result]) GetResult() (*Result, error) {
-	var res Result
-	err := json.Unmarshal(r.Result, &res)
+func Result[T any](resp *Response) (*T, error) {
+	var res T
+	err := json.Unmarshal(resp.Result, &res)
 	if err != nil {
 		return nil, err
 	}

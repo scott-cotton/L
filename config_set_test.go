@@ -7,13 +7,13 @@ import (
 	"github.com/scott-cotton/L"
 )
 
-var setCfg = L.NewConfig("Lset")
+var setCfg = L.NewConfig()
 
 func Example_config_set() {
 	cfg := L.NewConfig("a", "b", "c", ".d", "e")
 	setCfg.Labels["b"] = 11
 	setCfg.Labels[".d"] = 73
-	cfg.Apply(setCfg)
+	cfg.Apply(setCfg, nil)
 	keys := make([]string, 0, len(cfg.Labels))
 	for k := range cfg.Labels {
 		keys = append(keys, k)

@@ -19,10 +19,14 @@ type Logger interface {
 	// logger.
 	ReadConfig() *Config
 
-	// ApplyConfig calls 'lc.Apply(cfg)' on this logger and all of its
-	// children where 'lc' is the config associated with this logger, or in
-	// recursive application, the child logger.
-	ApplyConfig(cfg *Config)
+	// ApplyConfig calls 'lc.Apply(cfg, opts)' on this logger and, if
+	// 'opts.Recursive' is true.  Here, all of its children where 'lc' is
+	// the config associated with this logger, or in recursive application,
+	// the child logger.  'opts' may be nil, in which case it is equivalent
+	// to `ApplyConfig(cfg, &ApplyOpts{})`.
+	ApplyConfig(cfg *Config, opts *ApplyOpts)
+
+	Walk(func(*Config))
 
 	// ConfigTree appends a sub-tree of configurations corresponding
 	// to this logger to dst
@@ -84,13 +88,15 @@ func (l *logger) ConfigTree(dst []ConfigNode) []ConfigNode {
 	if l.parent != nil {
 		parent = l.parent.i
 	}
-	node := ConfigNode{
-		Config:  *cfg,
-		Parent:  parent,
-		Package: cfg.pkg,
+	node := &ConfigNode{
+		PackageConfig: PackageConfig{
+			Config:  *cfg,
+			Package: cfg.pkg,
+		},
+		Parent: parent,
 	}
 	l.i = len(dst)
-	dst = append(dst, node)
+	dst = append(dst, *node)
 	for k := range l.children {
 		dst = k.ConfigTree(dst)
 	}
@@ -120,15 +126,27 @@ func (l *logger) Log(o *Obj) {
 	}
 }
 
-func (l *logger) ApplyConfig(cfg *Config) {
+func (l *logger) Walk(fn func(*Config)) {
 	if l == nil {
 		return
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.config.Apply(cfg)
+	fn(l.config)
+	for k := range l.children {
+		k.Walk(fn)
+	}
+}
+
+func (l *logger) ApplyConfig(cfg *Config, opts *ApplyOpts) {
+	if l == nil {
+		return
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.config.Apply(cfg, opts)
 	for c := range l.children {
-		c.ApplyConfig(cfg)
+		c.ApplyConfig(cfg, opts)
 	}
 }
 
@@ -159,8 +177,8 @@ var root = &logger{
 }
 
 // Apply applies the configuration `c` to all Loggers created by this package.
-func ApplyConfig(c *Config) {
-	root.ApplyConfig(c)
+func ApplyConfig(c *Config, opts *ApplyOpts) {
+	root.ApplyConfig(c, opts)
 }
 
 func (l *logger) mkChild() *logger {
@@ -239,4 +257,8 @@ func (l *logger) Bytes(d []byte) *Obj {
 
 func ConfigTree() []ConfigNode {
 	return root.ConfigTree(nil)
+}
+
+func Walk(fn func(*Config)) {
+	root.Walk(fn)
 }
