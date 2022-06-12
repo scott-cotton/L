@@ -2,9 +2,12 @@ package L
 
 // ApplyOpts dictates how the application will occur.
 type ApplyOpts struct {
-	Recursive          bool
-	PreserveLabels     map[string]bool
-	RemoveAbsentLabels bool
+	// whether to apply recursively.
+	Recursive bool `json:"recursive,omitempty"`
+	// labels whose values are carried over to the result, if RemoveAbsentLabels
+	// is false or the label is in the config
+	PreserveLabels     map[string]bool `json:"preserveLabels,omitempty"`
+	RemoveAbsentLabels bool            `json:"removeAbsentLabels,omitempty"`
 }
 
 // Apply applies the configuration o to c.  Fields are copied over if they are
