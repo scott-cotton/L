@@ -3,7 +3,6 @@ package rpc
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 type Request struct {
@@ -57,7 +56,6 @@ func NewResponse[Result any](id int, r *Result) (*Response, error) {
 }
 
 func ErrorResponse(id, code int, msg string) *Response {
-	fmt.Printf("ErrorResponse %d %d %s\n", id, code, msg)
 	return &Response{
 		ID: id,
 		Error: &Error{

@@ -30,8 +30,14 @@ func Apply(parms *ApplyParams) (ApplyResult, error) {
 			return
 		}
 		cfg.Apply(parms.Config, parms.Opts)
+		ocfg := cfg.Clone()
+		labels := map[string]int{}
+		for k, v := range ocfg.Labels {
+			labels[ocfg.Localize(k)] = v
+		}
+		ocfg.Labels = labels
 		res = append(res, L.PackageConfig{
-			Config:  *cfg.Clone(),
+			Config:  *ocfg,
 			Package: pkg,
 		})
 	}

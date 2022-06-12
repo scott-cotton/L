@@ -195,6 +195,8 @@ func (t *Obj) Str(s string) *Obj {
 			d = append(d, '\\', 'f')
 		case '\n':
 			d = append(d, '\\', 'n')
+		case '\t':
+			d = append(d, '\\', 't')
 		case '\r':
 			d = append(d, '\\', 'r')
 		default:

@@ -86,7 +86,7 @@ func (c *Config) Unlocalize(label string) string {
 // starts with c's package.
 func (c *Config) Localize(label string) string {
 	if strings.HasPrefix(label, c.pkg+".") {
-		return label[len(c.pkg)+1:]
+		return label[len(c.pkg):]
 	}
 	return label
 }

@@ -10,6 +10,7 @@ import (
 
 // Logger is the interface to a structured logger.
 type Logger interface {
+
 	// logs a structured object as JSON
 	Log(o *Obj)
 
@@ -90,6 +91,11 @@ func (l *logger) ConfigTree(dst []ConfigNode) []ConfigNode {
 	if l.parent != nil {
 		parent = l.parent.i
 	}
+	labels := map[string]int{}
+	for k, v := range cfg.Labels {
+		labels[cfg.Localize(k)] = v
+	}
+	cfg.Labels = labels
 	node := &ConfigNode{
 		PackageConfig: PackageConfig{
 			Config:  *cfg,
