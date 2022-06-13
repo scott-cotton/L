@@ -130,6 +130,11 @@ func (t *Obj) Err(e error) *Obj {
 	return t.Field("Lerr", e.Error())
 }
 
+// Errf returns t.Err(fmt.Errorf(msgFmt, vs...))
+func (t *Obj) Errf(msgFmt string, vs ...any) *Obj {
+	return t.Err(fmt.Errorf(msgFmt, vs...))
+}
+
 // Field sets a field with key 's' to value 'v'.
 // 'v' must be a bool, int, string, float64, or
 // *Obj or implement json.Marshaler.  If

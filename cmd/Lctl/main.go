@@ -45,7 +45,7 @@ func main() {
 	}
 	args := flag.Args()
 	if len(args) == 0 {
-		wo.Err(fmt.Errorf("no args specified, usage:\n%s", usage)).Fatal()
+		wo.Fmt("no args specified, usage:\n%s", usage).Fatal()
 	}
 	switch args[0] {
 	case "loggers":
@@ -68,7 +68,7 @@ func main() {
 		if fname != "-" {
 			r, err = os.Open(fname)
 			if err != nil {
-				Lerr.Dict().Err(err).Fatal()
+				wo.Err(err).Fatal()
 			}
 			defer r.Close()
 		}
@@ -87,6 +87,6 @@ func main() {
 		}
 
 	default:
-		wo.Err(fmt.Errorf("unknown method %q", args[0])).Fatal()
+		wo.Fmt("unknown method %q", args[0]).Fatal()
 	}
 }
