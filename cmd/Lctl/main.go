@@ -29,41 +29,37 @@ var logger = L.New(&L.Config{
 	},
 })
 
-var warn = logger.With("warn", 1)
+var Lerr = logger.With("Lcmd.err", 1)
 
 var url = flag.String("addr", "http://localhost:4321/L", "url of L service")
 var key = flag.String("key", "", "key for communicating with addr")
 
 func main() {
-	wo := warn.Dict()
+	wo := Lerr.Dict()
 	flag.Parse()
 	client, err := rpc.NewClient(*key, *url)
 	if err != nil {
-		wo.Err(err).Log()
+		wo.Err(err).Fatal()
 		os.Exit(1)
 	}
 	args := flag.Args()
 	if len(args) == 0 {
-		wo.Err(fmt.Errorf("no args specified, usage:\n%s", usage)).Log()
-		os.Exit(2)
+		wo.Err(fmt.Errorf("no args specified, usage:\n%s", usage)).Fatal()
 	}
 	switch args[0] {
 	case "loggers":
 		res, err := client.Loggers()
 		if err != nil {
-			wo.Err(err).Log()
-			os.Exit(3)
+			wo.Err(err).Fatal()
 		}
 		jenc := json.NewEncoder(os.Stdout)
 		jenc.SetIndent("", "  ")
 		if err := jenc.Encode(res); err != nil {
-			wo.Err(err).Log()
-			os.Exit(4)
+			wo.Err(err).Fatal()
 		}
 	case "apply":
 		if len(args) == 1 {
-			wo.Err(fmt.Errorf("no args specified, usage:\n%s", usage)).Log()
-			os.Exit(2)
+			wo.Err(fmt.Errorf("no args specified, usage:\n%s", usage)).Fatal()
 		}
 		fname := args[1]
 		r := os.Stdin
@@ -71,28 +67,25 @@ func main() {
 		if fname != "-" {
 			r, err = os.Open(fname)
 			if err != nil {
-				warn.Dict().Err(err).Log()
-				os.Exit(4)
+				Lerr.Dict().Err(err).Fatal()
 			}
 			defer r.Close()
 		}
 		var params rpc.ApplyParams
 		if err := json.NewDecoder(r).Decode(&params); err != nil {
-			warn.Dict().Err(err).Log()
-			os.Exit(4)
+			wo.Err(err).Fatal()
 		}
 		res, err := client.Apply(&params)
 		if err != nil {
-			wo.Err(err).Log()
-			os.Exit(4)
+			wo.Err(err).Fatal()
 		}
 		jenc := json.NewEncoder(os.Stdout)
 		jenc.SetIndent("", "  ")
 		if err := jenc.Encode(res); err != nil {
-			wo.Err(err).Log()
+			wo.Err(err).Fatal()
 		}
 
 	default:
-		wo.Err(fmt.Errorf("unknown method %q", args[0])).Log()
+		wo.Err(fmt.Errorf("unknown method %q", args[0])).Fatal()
 	}
 }

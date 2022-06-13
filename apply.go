@@ -27,8 +27,8 @@ type ApplyOpts struct {
 // package name, but if they start with '.', they are expanded with the package
 // name of 'c' when copied to c's Labels.
 //
-// if a label in 'c', with any package name stripped, is not in o, then it is
-// removed from c.
+// if a label in 'c', with any package name stripped, is not in o, then
+// it may be removed from c or preserved, according to 'opts'.
 func (c *Config) Apply(o *Config, opts *ApplyOpts) {
 	if opts == nil {
 		opts = &ApplyOpts{}

@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"unicode/utf8"
 )
@@ -209,6 +210,12 @@ func (t *Obj) Str(s string) *Obj {
 	return t
 }
 
+// Fmt creates a string with Sprintf semantics.
+func (t *Obj) Fmt(fmt string, vs ...any) *Obj {
+	return t.Str(fmt.Sprintf(fmt, vs...))
+}
+
+// Bool creates a bool object.
 func (t *Obj) Bool(v bool) *Obj {
 	if t == nil {
 		return nil
@@ -293,6 +300,11 @@ func (t *Obj) Log() {
 	}
 	r := t.getRoot()
 	r.logger.Log(t)
+}
+
+func (t *Obj) Fatal() {
+	t.Log()
+	os.Exit(1)
 }
 
 // D returns the underlying []byte.
