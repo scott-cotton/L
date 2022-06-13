@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"os"
 	"time"
 
@@ -45,7 +44,7 @@ func main() {
 	}
 	args := flag.Args()
 	if len(args) == 0 {
-		wo.Fmt("no args specified, usage:\n%s", usage).Fatal()
+		wo.Errf("no args specified, usage:\n%s", usage).Fatal()
 	}
 	switch args[0] {
 	case "loggers":
@@ -60,7 +59,7 @@ func main() {
 		}
 	case "apply":
 		if len(args) == 1 {
-			wo.Err(fmt.Errorf("no args specified, usage:\n%s", usage)).Fatal()
+			wo.Errf("no args specified, usage:\n%s", usage).Fatal()
 		}
 		fname := args[1]
 		r := os.Stdin
@@ -87,6 +86,6 @@ func main() {
 		}
 
 	default:
-		wo.Fmt("unknown method %q", args[0]).Fatal()
+		wo.Errf("unknown method %q", args[0]).Fatal()
 	}
 }
