@@ -3,6 +3,7 @@ package L
 import (
 	"runtime"
 	"strings"
+	"time"
 )
 
 // Middleware is a type for hooks into Loggers'
@@ -22,6 +23,12 @@ func Pkg() Middleware {
 	}
 	return func(_ *Config, o *Obj) *Obj {
 		return o.Field("Lpkg", pkg)
+	}
+}
+
+func TimeFormat(key, fmt string) Middleware {
+	return func(_ *Config, o *Obj) *Obj {
+		return o.Field(key, time.Now().Format(fmt))
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/scott-cotton/L"
 	"github.com/scott-cotton/L/rpc"
@@ -20,7 +21,7 @@ const usage = `Lctl <name|url> <cmd>
 
 var logger = L.New(&L.Config{
 	Labels: map[string]int{},
-	Post:   []L.Middleware{L.Pkg()},
+	Post:   []L.Middleware{L.Pkg(), L.TimeFormat("time", time.RFC1123)},
 	W:      os.Stderr,
 	E:      L.EPanic,
 	F: &L.TableFmter{

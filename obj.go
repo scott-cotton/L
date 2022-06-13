@@ -211,8 +211,8 @@ func (t *Obj) Str(s string) *Obj {
 }
 
 // Fmt creates a string with Sprintf semantics.
-func (t *Obj) Fmt(fmt string, vs ...any) *Obj {
-	return t.Str(fmt.Sprintf(fmt, vs...))
+func (t *Obj) Fmt(f string, vs ...any) *Obj {
+	return t.Str(fmt.Sprintf(f, vs...))
 }
 
 // Bool creates a bool object.
