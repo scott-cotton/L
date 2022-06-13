@@ -32,7 +32,7 @@ L provides
 - The ability for a package to define its own default configuration.
 - Support for MiddleWare.
 - An HMAC authenticated jsonrpc service exposed via HTTP for viewing and
-manipulating logs. 
+manipulating loggers and their configurations.
 
 ## Working with L
 
@@ -56,6 +56,7 @@ a slice of values, i.e. Go's representation of free form json objects.
 ```go
 // log a field {"k": 77}
 var myL = L.New(L.NewConfig())
+
 
 myL.Dict().Field("k", 77).Log()
 
