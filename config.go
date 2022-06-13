@@ -43,6 +43,10 @@ func NewConfig(labels ...string) *Config {
 	pc, _, _, _ := runtime.Caller(1)
 	fn := runtime.FuncForPC(pc).Name()
 	i := strings.LastIndexByte(fn, byte('.'))
+	j := strings.IndexByte(fn, byte('('))
+	if j != -1 && j < i {
+		i = j - 1
+	}
 	pkg := fn
 	if i != -1 {
 		pkg = fn[:i]

@@ -41,6 +41,9 @@ Response
 }
 ```
 
+The parent field in each array entry of the result is the index in the array
+of the parent of the logger, -1 if there is no parent (the root).
+
 
 
 ## apply
@@ -106,7 +109,8 @@ Each message takes the form
 ```
 
 The payload is the base64 encoded byte array of the respective messages above.
-The signature is the hmac sha256 signature of the payload (before base64 encoding).
+The signature is the base64 encoding of the hmac sha256 signature of the payload 
+(before base64 encoding).
 
 ## HTTP gateway
 

@@ -39,7 +39,9 @@ type Logger interface {
 	// as this logger but which additionally has the specified
 	// labels.  As in 'NewConfig', labels starting with a '.'
 	// are implicitly package scoped to the package specified
-	// in this loggers configuration.
+	// in this loggers configuration.  Also as in 'NewConfig',
+	// the resulting logger is associated with the package of
+	// the caller.
 	WithMap(map[string]int) Logger
 
 	// With is convenience for WithMap(map[string]int{lbl: v}).
@@ -74,6 +76,18 @@ func (l *logger) WithMap(labels map[string]int) Logger {
 		}
 		cfg.Labels[key] = v
 	}
+	pc, _, _, _ := runtime.Caller(1)
+	fn := runtime.FuncForPC(pc).Name()
+	i := strings.LastIndexByte(fn, byte('.'))
+	j := strings.IndexByte(fn, byte('('))
+	if j != -1 && j < i {
+		i = j - 1
+	}
+	pkg := fn
+	if i != -1 {
+		pkg = fn[:i]
+	}
+	cfg.pkg = pkg
 	return New(cfg)
 }
 
