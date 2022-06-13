@@ -75,6 +75,10 @@ func Geq(label string, value int) Middleware {
 	}
 }
 
+// Label will add a field to o with the key label
+// and the value of the logger's configuration
+// label map for that key.  If the key is absent,
+// the zero value is used.
 func Label(label string) Middleware {
 	return func(cfg *Config, o *Obj) *Obj {
 		return o.Field(label, cfg.Labels[label])

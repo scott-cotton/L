@@ -20,6 +20,8 @@ type TableFmter struct {
 func (c *TableFmter) Fmt(w io.Writer, d []byte) error {
 	if c.buf == nil {
 		c.buf = bytes.NewBuffer(nil)
+	} else {
+		c.buf.Reset()
 	}
 	j := map[string]any{}
 	json.Unmarshal(d, &j)

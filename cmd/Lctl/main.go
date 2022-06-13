@@ -35,6 +35,7 @@ var url = flag.String("addr", "http://localhost:4321/L", "url of L service")
 var key = flag.String("key", "", "key for communicating with addr")
 
 func main() {
+	// don't know why, but we're doing structured logging here.
 	wo := Lerr.Dict()
 	flag.Parse()
 	client, err := rpc.NewClient(*key, *url)

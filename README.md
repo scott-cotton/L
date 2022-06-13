@@ -15,12 +15,12 @@ If projects A and B organise their logging differently, and project C would
 like to use A and B and yet manage the logging, L can be used to resolve the
 differences between A and B and C's desired logging setup.  In other words, if
 you would like your project to be used in other projects with distinct logging
-styles, and you find L worthy enough in its current nascent state, then L can do
-that.
+styles, or want your own style, and you find L worthy enough in its current
+nascent state, then L can do that.
 
 L permits flexible per-project configuration in a way that can be overriden by
-a main entrypoint, viewed, and manipulated via an authenticated
-RPC service accessible via an HTTP gateway at runtime.
+a main entrypoint, viewed, and manipulated via an authenticated RPC service
+accessible via an HTTP gateway at runtime.
 
 L provides
 
