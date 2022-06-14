@@ -112,28 +112,24 @@ log.Info().Msg("hello")
 or similar.  Logging can happen at very high frequency in terms of lines of code,
 leading to a whole lot ".\<level\>()" repeats.
 
-Another problem with existing levelled logging options is that one must choose
-the levels for a whole project, making inter-project dependencies difficult when
-different projects use different levels.
-
 L proposes to treat this differently.  L uses labels which can be turned on or
 off at the call site and at main entry points, together with middle ware to
-have efficient levelled logging. 
+have efficient levelled logging, while retaining more standard method naming
+for levels which, in addition, strongly imply universal flow control.
 
-The idea is that for a project which wants to define its own levels, the project
-defines a project specific level key and associated integer values.
+More concretely, [this test
+file](https://github.com/scott-cotton/L/blob/main/level_test.go) contains a
+full working example. Additionally, the standard Go packages provide an idiom
+for a subset of "levels", when the level distinction interacts with flow
+control in an obvious and systematic way: We have .Fatal{...}, .Errorf, and
+.Printf, each of which indicates a clear, fairly universal tool with respect to
+flow control.  Comparing .Debug and .Trace may be useful but it is not, by any
+means universal.  Let's not impose that on projects, but let's not impose the
+absence of .Debug either.  Such impositions make inter-project interoperability
+difficult.
 
-[this test file](https://github.com/scott-cotton/L/blob/main/level_test.go)
-contains a full working example.
-
-This mechanism is dynamic.  At runtime, you can set the logging to a given
-level.  For example, you can automatically increase the level if the frequency
-of errors goes above some threshold.  The L implementation eliminates the 
-processing time of construction of loggable objects when filtering messages
-in this way.
-
-L provides more general middleware for filtering logging, with the same
-performance considerations.
+L provides support for both styles of levelled logging, and more general
+middleware for filtering logging, with the same performance considerations.
 
 ## Middleware
 
