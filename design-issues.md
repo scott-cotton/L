@@ -61,8 +61,7 @@ retrieved multiple times.
 
 ### Status
 
-Some work remains to be done on the relation between this and levelled 
-logging.  We can call 
+We can call 
 ```
 obj := L.FromContext(ctx)
 defer obj.{Log,Fatal}()
@@ -75,33 +74,41 @@ defer func() {
 }()
 ```
 
-But the distinction between non-flow control levels is not
-yet addressed.  For example, to have a trace log the object
-from context, we'd need to attach it to the trace logger:
+For non-flow control levels, we use
 ```
-obj := L.FromContext(ctx)
-Ltrace.Dict().Set("Ltrace", obj) // now obj.Log will go to trace.
+traceObj := L.FromContextWith(ctx, Ltrace)
+defer traceObj.Log() // now obj.Log will go to trace.
 ```
 
-This seems cumbersome and should be improved.
+This seems to work.
 
 ## Levelled logging
 
 ### Decision: use configuration instead of fixed levels
-There are too many different ways to do levels to attach
-them to method/function names.
 
-### Decision: use methods (.Fatal,.Log,.Err) for flow control
+There are too many different ways to do levels to attach them to
+method/function names.
+
+### Decision: use methods (.Fatal,.Log,.Err) for universal flow control
+
 Flow control variation is always a concern for a package,
-even when it corresponds to levels.
+even when it corresponds to levels.  Levels which do not carry
+with them implicit flow control semantics in any package (.Fatal,.Err)
+
+For example, even a very high _trace_ level may need to handle errors,
+because they are part of Go's flow control standard practices.  Why
+not let it do Fatal as well?
 
 ### Decision: Make sure message generation is fast 
+
 L Objects short circuit on nil, so this should work.
 
 ### Status:
+
 - Short circuiting seems to work.
 - Flow control is nice.
-- Setting up different levels outside of flow control is reasonably feasible.
+- Setting up different levels outside of flow control is reasonably concise for
+  several use cases.
 
 
 
