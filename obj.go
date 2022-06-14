@@ -135,11 +135,10 @@ func (t *Obj) Errf(msgFmt string, vs ...any) *Obj {
 	return t.Err(fmt.Errorf(msgFmt, vs...))
 }
 
-// Field sets a field with key 's' to value 'v'.
-// 'v' must be a bool, int, string, float64, or
-// *Obj or implement json.Marshaler.  If
-// 'v' implements json.Marshaler, and json.Marshal(v)
-// returns an error, Field panics.
+// Field sets a field with key 's' to value 'v'.  'v' must be a bool, int,
+// string, float64, or *Obj or implement json.Marshaler.  If 'v' implements
+// json.Marshaler, and json.Marshal(v) returns an error 'e', Field panics with
+// 'panic(e)'.
 func (t *Obj) Field(s string, v any) *Obj {
 	if t == nil {
 		return nil
