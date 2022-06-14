@@ -105,12 +105,20 @@ func (c *Config) Package() string {
 	return c.pkg
 }
 
+// PackageConfig is a Config wrapper that exposes a Package Field.
+// Config's have .Package() to make the package read-only, PackageConfig
+// provides a json friendly wrapper.
 type PackageConfig struct {
 	Config
 	Package string `json:"package"`
 }
 
+// ConfigNode represents a Config in a ConfigTree, assumed to take the
+// form of []ConfigNode.
 type ConfigNode struct {
 	PackageConfig
+
+	// The index of the parent in the the tree, or -1 if there is none
+	// (the root).
 	Parent int `json:"parent"`
 }
