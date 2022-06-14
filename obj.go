@@ -43,7 +43,7 @@ type Obj struct {
 	hadChild bool
 	d        []byte
 	i        int
-	logger   *logger
+	logger   Logger
 }
 
 func (t *Obj) mkChild() *Obj {
@@ -309,6 +309,10 @@ func (t *Obj) Log() {
 func (t *Obj) Fatal() {
 	t.Log()
 	os.Exit(1)
+}
+
+func (t *Obj) As(label string) *Obj {
+	return t
 }
 
 // D returns the underlying []byte.
