@@ -5,6 +5,5 @@
 // accepts hmac enveloped jsonrpc 2.0 requests for an rpc service with the
 // following methods.
 //
-// You can find a design doc [here](https://github.com/scott-cotton/L/blob/main/rpc/design.md).
-//
+// You can find a design doc at https://github.com/scott-cotton/L/blob/main/rpc/design.md.
 package rpc

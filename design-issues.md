@@ -122,7 +122,7 @@ If, under normal operating conditions, your app is bottlenecking on logging, the
 one of the following is the problem, and not the performance of the logging package:
 
 1. The app has a poor level abstraction: every event on every data object gets logged by
-default, meaning that the doesn't do anything substantial except trivial modifications
+default, meaning that the app doesn't do anything substantial except trivial modifications
 of a single kind of structured data.   That's not an app worthy of logging.
 1. The default log level is too high.
 1. The logging configuration requires the default log level to be too high because it does
@@ -132,7 +132,9 @@ not permit logging only what you want.
 one and log its higher level events (open, close, processed Nx10000 events,
 Workers {increased or decreased} to N, ...).
 
-That being said, it seems L may be in the ballpark for "high performance logging", whatever 
+### Status:
+
+It seems so far L may be in the ballpark for "high performance logging", whatever 
 that means.
 
 
